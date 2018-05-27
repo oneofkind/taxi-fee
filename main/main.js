@@ -1,53 +1,48 @@
 module.exports = main;
 
 /**
- * 获取每公里的计程费
- * - 2~8公里 0.8 元
- * - 8公里以上加收 50%
- * @param {Number} mile 
- */
-function getPerMileCost(mile) {
-    let perCost = 0.8
-    if (mile > 2 && mile < 8) {
-        return perCost;
-    } else if (mile >= 8) {
-        return perCost * 1.5;
-    } else {
-        return 0;
-    }
-}
-
-/**
  * 计算因里程所产生的花费
- * - 2公里以内起步价，超过两公里按照里程加收
+ * - 2公里以内起步价
+ * - 2~8 公里每公里收取服务费
+ * - 8公里以上每公里加收50%服务费
  * @param {Number} mileage 里程数
  */
-function countCostOfMilegae(mileage) {
-    let cost = 0;
-    let initCost = 6;
-    let perMileCost = getPerMileCost(mileage)
-    if (mileage < 0) {
-        throw 'milegae is illegal'
-    } else if (mileage <= 2) {
-        cost = initCost;
-    } else if (mileage > 2) {
-        let mile = mileage - 2;
-        cost = initCost + mile * perMileCost
+function countFeeOfMilegae(mileage) {
+    let fee = 0;
+    let initFee = 6;
+    let perFee = 0.8;
+    let superPerFee = perFee * 1.5;
+    let initFeeMile = 2;
+    let nomalFeeMile = 8
+    switch (true) {
+        case mileage < initFeeMile:
+            fee = initFee;
+            break;
+        case mileage > initFeeMile && mileage < nomalFeeMile:
+            fee = initFee + (mileage - initFeeMile) * perFee;
+            break;
+        case mileage >= nomalFeeMile:
+            fee = initFee + (mileage - nomalFeeMile) * superPerFee + (nomalFeeMile - initFeeMile) * perFee;
+            break;
+        default:
+            fee = 6;
+            break;
     }
-    return cost;
+
+    return fee;
 }
 
 /**
  * 根据等待时间收费
  * @param {Number} time 
  */
-function countCostOfWaitTime(time) {
-    let cost = 0;
-    let perTimeCost = 0.25;
-    if (time < 0) {
-        throw 'time is illegal'
+function countFeeOfWaitTime(time) {
+    let cost;
+    let fee = 0.25;
+    if (time == undefined) {
+        return cost = 0;
     } else {
-        cost = time * perTimeCost;
+        cost = time * fee;
     }
     return cost;
 }
@@ -58,7 +53,7 @@ function countCostOfWaitTime(time) {
  * @param {Number} costOfM 里程
  * @param {Number} costOfT 时间
  */
-function countCost(costOfM, costOfT) {
+function countFee(costOfM, costOfT) {
     let cost = costOfM + costOfT
     return Math.round(cost);
 }
@@ -69,8 +64,8 @@ function countCost(costOfM, costOfT) {
  * @param {Number} waitTime 等待时长
  */
 function main(milegae, waitTime) {
-    let costOfMileage = countCostOfMilegae(milegae);
-    let costOfWaitTime = countCostOfWaitTime(waitTime);
-    let cost = countCost(costOfMileage, costOfWaitTime)
-    return cost
+    let feeOfMileage = countFeeOfMilegae(milegae);
+    let feeOfWaitTime = countFeeOfWaitTime(waitTime);
+    let fee = countFee(feeOfMileage, feeOfWaitTime)
+    return fee
 };
