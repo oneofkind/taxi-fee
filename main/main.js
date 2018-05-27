@@ -15,7 +15,7 @@ function countFeeOfMilegae(mileage) {
     let initFeeMile = 2;
     let nomalFeeMile = 8
     switch (true) {
-        case mileage < initFeeMile:
+        case mileage <= initFeeMile:
             fee = initFee;
             break;
         case mileage > initFeeMile && mileage < nomalFeeMile:
